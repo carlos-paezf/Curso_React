@@ -235,3 +235,40 @@ axios.get("https://jsonplaceholder.typicode.com/todos/1")
 ```
 
 ## Async y Await
+
+Podemos convertir las promesas en funciones async, la cual mantiene la promesa. Async permite que la ejecución este en espera hasta que se de una respuesta.
+
+```js
+const saludoPromesa = () => 
+  new Promise((resolve, reject) => 
+    resolve("Hola mundo con una Promesa clásica <br>"));
+
+const saludoAsync = async () => 
+  "Hola mundo con Async <br>";
+```
+
+### Fetch con Async y Await
+
+Podemos hacer las peticiones a un servidor, y por medio de Async la dejamos como una promesa pendiente, la cual podemos usar al hacer uso de Await. De esa manera nos ahorramos el uso continuo de `.then()` y podemos manipular la data a nuestra conveniencia.
+
+```js
+const peticionFetch = async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+    const data = await response.json();
+    return data;
+}
+const data = await peticion().then(console.log);
+```
+
+### Axios con Async y Await
+
+Pasa lo mismo con Axios, podemos hacerlo como promesa pendiente por medio de async y detener la espera con el await.
+
+```js
+const peticionAxios = async () => {
+    const { data } = await axios.get('https://jsonplaceholder.typicode.com/todos/3');
+    return data;
+}
+const respuesta = peticionAxios().then(console.log);
+```
+
