@@ -29,7 +29,7 @@ export default App;
 import Contador from "./components/Contador";
 
 const App = () => {
-  return <Contador />;
+  return <Contador inicial={5} factorDisminuir={0.5} />;
 };
 
 export default App;

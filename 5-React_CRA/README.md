@@ -45,3 +45,68 @@ Podemos crear una carpeta en donde se alojen los componentes que centralicen tod
 
 - `export function Componente() {...}`, en este caso nos exporta un JSON y para hacer una llamada especifica a un componente debemos usar array destructuring, por ejemplo `import { Componente } from "./carpeta-contenedora/archivo"`.
 - `export default Componente;` y en este caso no necesitamos de usar destructuring para llamar el componente, por ejemplo `import Componente from "./carpeta-contenedora/archivo"`.
+
+## Importación de React
+
+Al crear nuestro componente, se importa la librería de React por defecto, y si queremos traer métodos de dicha librería, podemos hacer un destructuring para traer los módulos que requerimos, con ello evitamos instanciar constantemente a React. Ejemplo con useState:
+
+- Instanciando constantemente a React:
+  
+  ```js
+  import React from "react";
+
+  const Component = () => {
+    const [foo, setFoo] = React.useState(estado);
+  }
+  ```
+
+- Aplicando destructuring
+
+  ```js
+  import React, { useState } from "react";
+
+  const Component = () => {
+    const [foo, setFoo] = useState(estado);
+  }
+  ```
+
+De esa manera, en caso de llamar muchas veces el método, evitamos usar `React.modulo`.
+
+## Props
+
+Los props nos permiten enviar la comunicación de un componente a otro. En el caso del contador, por ejemplo pasarle un valor inicial desde el punto de invocación.
+
+```js
+const App = () => {
+  return <Contador inicial={5} />;
+};
+```
+
+```js
+const Contador = (props) => {
+  const [contador, setContador] = useState(props.inicial);
+  //...
+  const reset = () => setContador((contador) => contador = props.inicial);
+  //...
+}
+```
+
+Ahora bien, en caso de querer usar varios props, podemos llamarlos de manera directa al hacer uso de destructuring en los parámetros del componente.
+
+```js
+const App = () => {
+  return <Contador inicial={5} factorDisminuir={0.5} />;
+};
+```
+
+```js
+const Contador = ({inicial, factorDisminuir}) => {
+
+  const [contador, setContador] = useState(inicial);
+
+  const aumentar = () => setContador((actual) => actual + 1);
+  const disminuir = () => setContador(contador - factorDisminuir);
+  const reset = () => setContador((contador) => contador = inicial);
+  //...
+}
+```
