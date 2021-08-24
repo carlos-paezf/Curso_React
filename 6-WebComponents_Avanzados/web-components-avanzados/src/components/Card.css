@@ -1,0 +1,17 @@
+.card {
+    display: flex;
+    /* border: 3px solid black; */
+    width: 300px;
+    margin: 10px auto;
+    border-radius: 12px;
+    box-shadow: 3px 3px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+img {
+    width: 5rem;
+    padding: 5%;
+}
+
+h3 {
+    text-align: center;
+}
