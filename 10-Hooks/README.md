@@ -235,7 +235,7 @@ return (
 
 ## useCallback
 
-Cada que muto un componente, la función que se encarga de dicha acción, se va a renderizar en cada mutación, ubicandose en un lugar de memoria distinto. La función `useCallback()` recibe la función que va a analizar, y una lista de resultados, con los cuales evita que si hay resultados iguales, se ejecute la función que ha recibido. 
+Cada que muto un componente, la función que se encarga de dicha acción, se va a renderizar en cada mutación, ubicandose en un lugar de memoria distinto. La función `useCallback()` recibe la función que va a analizar, y una lista de resultados, con los cuales evita que si hay resultados iguales, se ejecute la función que ha recibido.
 
 ```js
 const handleAdd = useCallback(() => {

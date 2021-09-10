@@ -15,9 +15,9 @@ export const useMemorizeApp = (initialValue = 0, rango = 1) => {
 
     const add = useCallback(() => {
         setContador((actual) => actual + rango)
-    }, [setContador])
+    }, [rango, setContador])
 
-    const visibility = useCallback(() => setView(!view), [setView])
+    const visibility = useCallback(() => setView(!view), [setView, view])
 
     return [contador, funPesadaMemo, add, visibility]
 }
