@@ -4,7 +4,9 @@ import React from 'react'
 // import State from './components/State'
 // import Effect from './components/Effect'
 // import LayoutEffect from './components/LayoutEffect'
-import Ref from './components/Ref.jsx'
+// import Ref from './components/Ref'
+import Memorize from './components/memos/Memorize'
+
 
 const App = () => {
   return (
@@ -15,7 +17,8 @@ const App = () => {
       {/* <State /> */}
       {/* <Effect /> */}
       {/* <LayoutEffect /> */}
-      <Ref />
+      {/* <Ref /> */}
+      <Memorize />
     </div>
   )
 }
