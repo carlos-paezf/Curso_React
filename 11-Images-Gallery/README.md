@@ -29,3 +29,20 @@ En mi caso, al día de redactar este readme, yo debería ingresar la siguiente i
 En vez de enviar nuestra access key por los headers, podemos enviarla por medio de la URL, logrando un endpoint de la siguiente manera: `https://api.unsplash.com/photos/?client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU`.
 
 Si contamos con un backend, el ideal es que la access key se pase mediante los headers, pero en nuestro caso, REACT es meramente frontend, razón por la cual las peticiones se realizan mediante la URL.
+
+## Cambios Iniciales
+
+- Archivos Borrados:
+  1. App.css
+  2. App.test.js
+  3. index.css
+  4. logo.svg
+  5. setupTests.js
+- Archivos Cambiados:
+  1. App.jsx
+     - Cambio de extensión
+     - Cambio a un arrow function
+  2. index.html: Enlace de Bootstrap CDN
+  3. index.js
+     - Borrado de referencias a archivos eliminados
+     - `serviceWorkerRegistration.register();`
