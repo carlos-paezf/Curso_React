@@ -248,3 +248,30 @@ Pero también, para obtener el correcto funcionamiento de nuestra logica, debemo
 ```js
 export default memo(BotonAdd)
 ```
+
+## CustomHooks
+
+Son funciones reutilizables, en la cual podemos centralizar parte de nuestra logica. Es muy común encontrarlos en una carpeta llamada `hooks` y con una patrón de `useFuncionalidad.js`. En este caso, tenemos un hook personalizado para incrementar y decrementar un valor inicial.
+
+```js
+import { useState } from 'react'
+
+export const useCounter = (initialValue, range = 1) => {
+    const [counter, setCounter] = useState(initialValue)
+
+    const increment = () => {
+        setCounter(counter + range)
+    }
+    const decrement = () => {
+        setCounter(counter - range)
+    }
+
+    return [counter, increment, decrement]
+}
+```
+
+Su implementación dentro de un componente es de la siguiente manera:
+
+```js
+    const [counter, increment, decrement] = useCounter(10)
+```

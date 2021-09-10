@@ -5,7 +5,9 @@ import React from 'react'
 // import Effect from './components/Effect'
 // import LayoutEffect from './components/LayoutEffect'
 // import Ref from './components/Ref'
-import Memorize from './components/memos/Memorize'
+// import Memorize from './components/memos/Memorize'
+// import Custom from './components/Custom'
+import Memorize2 from './components/memos/Memorize2'
 
 
 const App = () => {
@@ -18,7 +20,9 @@ const App = () => {
       {/* <Effect /> */}
       {/* <LayoutEffect /> */}
       {/* <Ref /> */}
-      <Memorize />
+      {/* <Memorize /> */}
+      {/* <Custom /> */}
+      <Memorize2 />
     </div>
   )
 }
