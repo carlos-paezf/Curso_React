@@ -14,15 +14,15 @@ La API está disponible en el endpoint `https://api.unsplash.com/` y dara las re
 
 Podemos acceder al servicio, si contamos con un access key, en este caso se puede hacer una prueba mediante POSTMAN, ingresando el endpoint de la sección anterior junto a una modificación para acceder a imágenes aleatorias (`https://api.unsplash.com/photos/random`), y en la sección de los headers de la petición ingresamos el siguiente formato.
 
-|Key|Value|
-|--|--|
-|Authorization|Client-ID *ACCESS_KEY*|
+| Key           | Value                  |
+| ------------- | ---------------------- |
+| Authorization | Client-ID *ACCESS_KEY* |
 
 En mi caso, al día de redactar este readme, yo debería ingresar la siguiente info:
 
-|Key|Value|
-|--|--|
-|Authorization|Client-ID m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU|
+| Key           | Value                                                 |
+| ------------- | ----------------------------------------------------- |
+| Authorization | Client-ID m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU |
 
 ## Authorization URL
 
@@ -46,3 +46,31 @@ Si contamos con un backend, el ideal es que la access key se pase mediante los h
   3. index.js
      - Borrado de referencias a archivos eliminados
      - `serviceWorkerRegistration.register();`
+
+## Container
+
+Dentro de la carpeta `components` esta el archivo `Container.jsx`, el cual contiene la estructura de una card de Bootstrap. La imagen tiene por contenido del atributo src la url de una imagen aleatoria que se obtiene luego de pasar el siguiente endpoint: `https://api.unsplash.com/photos/random/?client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU`. En la sección de URLS del JSON que se obtiene, copiamos la url de la opción regular.
+
+Pero queremos tener una logica más independiente, razón por la cual creamos un componente llamado `Card.jsx` en el cual almacenamos la el código para crear una card, y otro componente llamado `Cards.jsx` para poder hacer uso de multiples card.
+
+La generación de las images las podemos obtener al pasar una función async que ejecute el método `.fecth()` sobre el endpoint.
+
+```js
+const [images, setImages] = useState({
+  urls: {
+      regular: {}
+  }
+})
+
+const peticion = async () => {
+  const res = await fetch("https://api.unsplash.com/photos/random/?client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU")
+  const data = await res.json()
+  setImages(data)
+}
+```
+
+El componente `Card` ahora va a recibir un prop para cambiar la url del src de la imagen.
+
+```js
+<Card img={images.urls.regular} />
+```
