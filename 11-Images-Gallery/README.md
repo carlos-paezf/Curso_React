@@ -57,15 +57,15 @@ La generación de las images las podemos obtener al pasar una función async que
 
 ```js
 const [images, setImages] = useState({
-  urls: {
-      regular: {}
-  }
+    urls: {
+        regular: {}
+    }
 })
 
 const peticion = async () => {
-  const res = await fetch("https://api.unsplash.com/photos/random/?client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU")
-  const data = await res.json()
-  setImages(data)
+    const res = await fetch("https://api.unsplash.com/photos/random/?client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU")
+    const data = await res.json()
+    setImages(data)
 }
 ```
 
@@ -73,4 +73,98 @@ El componente `Card` ahora va a recibir un prop para cambiar la url del src de l
 
 ```js
 <Card img={images.urls.regular} />
+```
+
+## Pintar un listado de imágenes
+
+La anterior sección mostraba solo 1 imagen aleatoria, ahora necesitamos mostrar un álbum de imágenes. Para solucionar esta propuesta modificamos nuestro código de la siguiente manera: En el componente `Cards` cambiamos el tipo de `images` de objeto a array, para luego mapearlo y pasar los correspondientes props al componente `Card`. También tener en cuenta que nuestro endpoint cambia, pues ya no debe tener la directiva `random`.
+
+```js
+const [images, setImages] = useState([])
+
+const peticion = async () => {
+    const res = await fetch("https://api.unsplash.com/photos/?client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU")
+    const data = await res.json()
+    setImages(data)
+}
+// ...
+return (
+    <>
+        {images.map((img) => <Card key={img.id} img={img.urls.regular} />)}
+    </>
+)
+```
+
+```js
+const Card = ({ key, img }) => {/* ... */}
+
+Card.propTypes = {
+    key: PropTypes.string,
+    img: PropTypes.string
+}
+```
+
+## Formulario de Búsqueda
+
+Debemos crear una estructura `<form></form>` para recibir un parámetro de búsqueda. El texto que se pasa por el input de este formulario, se va a encontrar en la posición 0 del target. Esa entrada debe actualizarse cada vez que el usuario ingrese algo al input.
+
+```js
+const handleSubmit = (e) => {
+    e.preventDefault()
+    const text = e.target[0].value
+    setInput(text)
+}
+```
+
+Nuestro código vuelve a cambiar cuando queremos aplicar los parámetros de búsqueda en la url. En la nueva función, hemos decidido partir la ruta en diversas partes, con el fin de tener un acceso más comodo. Cada vez que detecte que la entrada es diferente a algo vacio, ingresa la query de acuerdo a lo ingresado.
+
+```js
+const peticion = async () => {
+    const accessKey = "client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU"
+    let route = `https://api.unsplash.com/photos/?${accessKey}`
+    if (input !== "") {
+        route = `https://api.unsplash.com/search/photos/?query=${input}&${accessKey}`
+    }
+    const res = await fetch(route)
+    const data = await res.json()
+    setImages(data)
+}
+```
+
+La petición se va a ejecutar al inicio y solo cuando cambie el valor del input.
+
+```js
+useEffect(() => {
+    peticion()
+}, [input])
+```
+
+Pero todo lo anterior nos arroja un error, y para ello modificamos de nuevo la petición: Lo primero fue aplicar un `useCallback()` que se modifique cada que cambia el input, el cual si viene con espacios se debe pasar a un formato que nos evite errores mediante la función `encodeURI()`. Ahora bien, cuando hacemos la búsqueda y obtenemos resultados, nuestra data debe cambiar, pues ahora pasa a encapsularse en una propiedad nueva llamada `results` (Nota: Esto pasa con la respuesta JSON que nos ofrece la API para este proyecto. Analizar en cada servicio que se use), de lo contrario se maneja la data normal.
+
+```js
+const peticion = useCallback(
+    async () => {
+        const accessKey = "client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU"
+        let route = `https://api.unsplash.com/photos/?${accessKey}`
+        if (input !== "") {
+            route = `https://api.unsplash.com/search/photos/?query=${encodeURI(input)}&${accessKey}`
+        }
+        const res = await fetch(route)
+        const data = await res.json()
+        if (data.results) {
+            setImages(data.results)
+        } else {
+            setImages(data)
+        }
+    },
+    [input]
+)
+```
+
+Como le hemos dicho al callback que cambie cada que se modifique el input, ahora podemos cambiar el effect y esperar que se lancé cada que cambie la petición:
+
+```js
+useEffect(() => {
+    peticion()
+}, [peticion])
 ```
