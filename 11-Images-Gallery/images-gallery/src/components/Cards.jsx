@@ -1,53 +1,30 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
+import { useFetchImages } from '../hooks/useFetchImages'
 import Card from './Card'
+import FormIMG from './FormIMG'
+import Loading from './Loading'
 
 const Cards = () => {
-    
-    const [images, setImages] = useState([])
-    const [input, setInput] = useState("")
-    
-    const peticion = useCallback(
-        async () => {
-            const accessKey = "client_id=m20vTpyUsw012OMX0b3xPzytBtyRVp7Xi9eM9IOLFNU"
-            let route = `https://api.unsplash.com/photos/?${accessKey}`
-            if (input !== "") {
-                route = `https://api.unsplash.com/search/photos/?query=${encodeURI(input)}&${accessKey}`
-            }
-            const res = await fetch(route)
-            const data = await res.json()
-            if (data.results) {
-                setImages(data.results)
-            } else {
-                setImages(data)
-            }
-        },
-        [input]
-    )
 
-    useEffect(() => {
-        peticion()
-    }, [peticion])
-
-    // console.log(images.urls.regular)
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        const text = e.target[0].value
-        setInput(text)
-    }
+    const [handleSubmit, loading, images] = useFetchImages()
 
     return (
-        <>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Buscar:
-                    <input type="text" name="inputText" id="inputText" />
-                </label>
-            </form>
+        <div>
+            <FormIMG handleSubmit={handleSubmit}/>
             <hr />
-            {images.map((img) => <Card key={img.id} img={img.urls.regular} />)}
-        </>
+
+            <div className="text-center">
+                {loading && <Loading />}
+            </div>
+
+            <div className="row">
+                {images.map((img) => {
+                    return <div key={img.id} className="col">
+                        <Card img={img.urls.regular} />
+                    </div>
+                })}
+            </div>
+        </ div>
     )
 }
 

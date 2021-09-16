@@ -168,3 +168,33 @@ useEffect(() => {
     peticion()
 }, [peticion])
 ```
+
+## Estilos del Proyecto
+
+Podemos agregar estilos que ya estan definido en Bootstrap, incluso hasta iconos. Es importante recordad que para llamar las clases de estilos debemos usar la palabra `className` en vez de `class`, con el fin de evitar conflictos con la palabra reservada dentro del contexto de POO.
+
+Para añadir iconos, añadimos el siguiente CDN dentro de nuestro archivo `index.html` dentro de la etiqueta `<head></head>`:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+```
+
+## Componente Loading
+
+Podemos contar un circulo de carga que se muestre cada vez que se envia una petición y mientras se espera una respuesta. Para ello traemos la base desde bootstrap y luego establecemos un estado, el cual inicia en un estado `true` y se mantiene de esa manera mientras se realiza la petición, y se convierte en `false` cuando la petición ha sido recibida.
+
+```js
+setLoading(true)
+const res = await fetch(route)
+const data = await res.json()
+if (data.results) {
+    setImages(data.results)
+} else {
+    setImages(data)
+}
+setLoading(false)
+```
+
+## Optimizar
+
+Podemos "partir" nuestro código en más archivos y de esa manera tener scripts más limpios. Por ejemplo el código que ejecuta la petición ha sido pasado a un hook personalizado con el fin de poder reducir código en el componente de `Cards`.
