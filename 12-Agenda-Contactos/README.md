@@ -21,3 +21,16 @@ Este proyecto fue creado siguiendo los siguientes comandos:
     ```cmd
     create-react-app agenda-contactos --template cra-template-pwa
     ```
+
+Los siguientes archivos fueron borrados:
+
+- App.css
+- App.test.js
+- index.css
+- setupTest.js
+
+El archivo `App.js` presenta una cambio de la función, además de que pasa a tener la extensión `.jsx`. El archivo `index.html` tiene las lineas de CDN para Bootstrap. El archivo `index.js` presenta el cambio en la linea de registro del Service Worker para poder registrarlo.
+
+```js
+serviceWorkerRegistration.register();
+```
