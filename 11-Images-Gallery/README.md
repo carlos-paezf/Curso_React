@@ -198,3 +198,13 @@ setLoading(false)
 ## Optimizar
 
 Podemos "partir" nuestro código en más archivos y de esa manera tener scripts más limpios. Por ejemplo el código que ejecuta la petición ha sido pasado a un hook personalizado con el fin de poder reducir código en el componente de `Cards`.
+
+## Configuración del Manifest
+
+Podemos descargar una imagen y con un Image Generator para PWA convertimos la imagen a nuestras necesidades. Las carpetas con las imagenes las guardamos en la carpeta de `public`.
+
+Las modificaciones básicas del `manifest.json` son el short name, name, description, iconos, theme color y background color.
+
+## Bundle del Proyecto
+
+Dentro del proyecto ingresamos el comando `yarn build`. El proyecto genera la carpeta `build`, la cual podemos montar por ejemplo en Netlify
