@@ -173,3 +173,43 @@ La función `split` va a crearnos un array el cual contiene por elemento cada se
 | ID Original                          | Array generado por split                             |
 | ------------------------------------ | ---------------------------------------------------- |
 | 1de280bb-cb9b-4afd-8d30-46709c5f809f | ["1de280bb", "cb9b", "4afd", "8d30", "46709c5f809f"] |
+
+## Capturar un contacto por el ID
+
+Para eliminar un registro, debemos capturar su id. Primero debemos pasar como prop el dispatch para capturar la acción que se desea realizar y luego, dependiendo el tipo, ejecutar una acción.
+
+```js
+<TablaContactos contactos={state} dispatch={dispatch} />
+```
+
+Para capturar el id del contacto, cada que pulsemos sobre el botón de eliminar, debemos pasar una función que reciba dicho id.
+
+```js
+<button className="btn btn-outline-danger" onClick={() => handleDelete(contacto.id)}>
+    Eliminar &nbsp;
+</button>
+```
+
+La función contiene un objeto con el tipo de acción, y el contenido a manipular. Dicho objeto luego se para por medio del dispatch a nuestro reducer.
+
+```js
+const handleDelete = (id) => {
+    const actionDelete = {
+        type: 'delete',
+        payload: id
+    }
+    dispatch(actionDelete)
+}
+```
+
+El reducer quedaria de la siguiente manera: En caso de que la acción sea eliminar, debe retornar dentro del nuevo state, todos los id, menos el que se ha seleccionado.
+
+```js
+export const ContactosReducer = (state, action) => {
+    switch (action.type) {
+        case 'add': return [...state, action.payload]
+        case 'delete': return state.filter(actual => actual.id !== action.payload)
+        default: return state
+    }
+}
+```

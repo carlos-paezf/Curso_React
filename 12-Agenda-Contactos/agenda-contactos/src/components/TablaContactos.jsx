@@ -1,6 +1,16 @@
 import React from 'react'
 
-const TablaContactos = ({ contactos }) => {
+const TablaContactos = ({ contactos, dispatch }) => {
+
+    const handleDelete = (id) => {
+        const actionDelete = {
+            type: 'delete',
+            payload: id
+        }
+        dispatch(actionDelete)
+    }
+
+
     return (
         <table className="table table-dark table-striped">
             <thead>
@@ -20,7 +30,7 @@ const TablaContactos = ({ contactos }) => {
                             <td>{ contacto.nombre }</td>
                             <td>{ contacto.numero }</td>
                             <td>
-                                <button className="btn btn-outline-danger">
+                                <button className="btn btn-outline-danger" onClick={() => handleDelete(contacto.id)}>
                                     Eliminar &nbsp;
                                     <i className="bi bi-trash2" />
                                 </button>
