@@ -213,3 +213,30 @@ export const ContactosReducer = (state, action) => {
     }
 }
 ```
+
+## Grabado en LocalStorage
+
+Podemos persistir los datos dentro del localStorage del navegador, para ello requerimos establecer que nuestro localStorage cambie cada que el estado de los datos se modifique, y eso lo logramos por medio del `useEffect()`. Local Storage tiene dentro de sus item un sistema de llave valor, para modificar un item necesitamos pasar el nombre del mismo y un string con la información que se piensa cambiar. Nosotros vamos a enviar la información de los objetos parseada a string mediante la función `stringify()` que ofrece JSON.
+
+```js
+useEffect(() => {
+    localStorage.setItem('contactos', JSON.stringify(state))
+}, [state])
+```
+
+Esta sección estamos trabajando desde el componente `Contactos`. La siguiente modificación, es eliminar el arreglo de contactos que teniamos como estado inicial, esto nos genera un error dentro de la función `useReducer()`. Para solucionarlo, pasamos como nuevo parámetro un array vacio.
+
+```js
+const [state, dispatch] = useReducer(ContactosReducer, [])
+```
+
+Este mismo hook recibe otro parámetro y es un estado inicial de manera diferida, el cual vamos a definir como una función que va a retornar un parseo a JSON si existe dentro de nuestro localStorage un item llamado *contactos*, y en caso contrario retorna un array vacio.
+
+```js
+const [state, dispatch] = useReducer(ContactosReducer, [], init)
+
+const init = () => {
+    const contactos = localStorage.getItem('contactos')
+    return contactos ? JSON.parse(contactos) : []
+}
+```
