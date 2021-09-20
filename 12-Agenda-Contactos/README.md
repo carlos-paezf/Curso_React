@@ -240,3 +240,24 @@ const init = () => {
     return contactos ? JSON.parse(contactos) : []
 }
 ```
+
+## Formulario Dinámico
+
+Podemos crear un formulario dinámico al crear una variable booleana que determine el estado de si esta oculto o no.
+
+```js
+const [formView, setFormView] = useState(false)
+```
+
+Dicho estado nos ayuda controlar la visualización del formulario, y lo podemos controlar a través de un botón.
+
+```js
+<button className="btn btn-outline-info mb-3" onClick={_ => setFormView(!formView)}>
+    {
+        formView
+            ? <i class="bi bi-arrows-angle-contract">&nbsp;Ocultar Formulario</i>
+            : <i class="bi bi-arrows-angle-expand">&nbsp;Agregar Contacto</i>
+    }
+</button>
+{formView && <FormularioADD dispatch={dispatch} />}
+```

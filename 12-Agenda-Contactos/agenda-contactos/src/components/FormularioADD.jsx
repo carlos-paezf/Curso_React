@@ -31,7 +31,6 @@ const FormularioADD = ({ dispatch }) => {
 
     return (
         <>
-            <div className="container">
                 <label className="mx-1 d-grid gap-2">
                     Nombre:
                     <input type="text" className="form-control" 
@@ -52,7 +51,6 @@ const FormularioADD = ({ dispatch }) => {
                         <i className="bi bi-person-plus" />
                     </button>
                 </div>
-            </div>
         </>
     )
 }
