@@ -261,3 +261,9 @@ Dicho estado nos ayuda controlar la visualización del formulario, y lo podemos 
 </button>
 {formView && <FormularioADD dispatch={dispatch} />}
 ```
+
+## Configurando el MANIFEST
+
+Lo primero es cambiar dentro del archivo `manifest.json` el short_name, el name, los iconos que se pueden obtener al convertir una imagen dentro de un PWA image converter, añadir un description y configurar el theme_color.
+
+Ejecutamos el comando `yarn build` para crear nuestra versión de producción, y la carpeta `build` la subimos al servidor donde desplegamos nuestras aplicaciones, como por ejemplo Netlifly. Mi aplicación fue desplegada: [Aplicación de Contactos simple](https://simple-contactos-app.netlify.app/). El dominio se puede modificar, lo que permite más comodidad.
