@@ -44,3 +44,54 @@ React es una librería, no un framework (no confundir con React Native), por lo 
 ```txt
 yarn add react-router-dom
 ```
+
+## Creación de Rutas
+
+Podemos definir dentro de una carpeta con los componentes de las páginas por las cuales vamos a navegar y en otra capeta guardamos el administrador de las rutas.
+
+Dentro del archivo `AppRouter.jsx` se esta haciendo una importación para el manejo de rutas:
+
+```js
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+```
+
+Dentro del componente se inicializa el gestor de rutas con las etiquetas `<Router></Router>` y dentro de las mismas tenemos unas etiquetas `<Switch></Switch>` que son parte de la importación anterior en las que definimos cuales son las rutas por las que nos vamos a mover y a que componente redirecciona cada una mediante las etiquetas `<Route />`
+
+```js
+<Router>
+    <Header />
+    <Switch>
+        <Route path="/" component={Home} />
+    </Switch>
+</Router>
+```
+
+Cuando queremos crear más rutas debemos pasar el prop `exact` a nuestro componente `<Route />` con el fin de que reconozca el componente que le pasamos.
+
+```js
+<Router>
+    <Header />
+    <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/about" component={About} />
+    </Switch>
+</Router>
+```
+
+Cuando se ingresa una ruta que no existe, podemos enviar una página con error 404, para ello creamos una ruta sin el prop `exact` que nos redireccione a la página de Not Found.
+
+```js
+<Route path="/" component={NOTFound} />
+```
+
+Cuando tenemos botones para redirigir a alguna página de nuestra aplicación, tenemos la opción de usar el componente `<Link></Link>` el cual recibe un prop llamado `to` a donde pasamos la url de la página deseada.
+
+```js
+import { Link } from 'react-router-dom'
+```
+
+```js
+<Link to="/about">About</Link>
+```
+
+La ventaja de hacer lo anterior, es que nos permite tener aplicaciones de tipo PWA.
