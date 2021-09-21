@@ -95,3 +95,49 @@ import { Link } from 'react-router-dom'
 ```
 
 La ventaja de hacer lo anterior, es que nos permite tener aplicaciones de tipo PWA.
+
+## REQ | RES
+
+En la página [REQ | RES](https://reqres.in/) podemos obtener datos falsos para probar la conexión con una API. En este primer caso, accedimos al apartado de Single User y copiamos la información de ese falso usuario dentro de un helper, con el fin de "simular" un inicio de sesión.
+
+## Context
+
+Podemos crear un contexto que se comparta en toda la aplicación. Para crearlo podemos hacer lo siguiente: (Tomado del archivo `context/userContext.js`)
+
+```js
+import { createContext } from 'react'
+
+export const UserContext = createContext(null);
+```
+
+Dicho contexto lo utilizamos dentro del archivo `App.jsx` de la siguiente manera: Reemplazamos `<React.Fragment>` por
+
+```js
+return (
+        <UserContext.Provider value={state}>
+            <AppRouter />
+        </UserContext.Provider>
+    )
+```
+
+Como nos podemos dar cuenta, el contexto esta recibiendo un prop llamado `value` que a su vez recibe una variable llamada `state`:
+
+```js
+const [user, setUser] = useState(null)
+const state = {user, setUser}
+```
+
+El contexto que vamos a compartir en nuestra aplicación es el estado del usuario. Para consumir el context implementamos el hook `useContext()` en el cual pasamos el `UserContext` y destructuramos el `user` y su `setUser`. Tenemos también un método con el cual al dar click le asignamos al `user` la data que obtenemos de la API, o que en este caso tenemos guardada en un helper.
+
+```js
+const { user, setUser } = useContext(UserContext)
+const handleLogin = () => {
+    setUser(userData)
+}
+```
+
+Cuando vayamos a la vista de about, si la data no ha sido asignada aún, no se muestra nada. Dentro del script aplicamos el mismo hook de `useContext()` para obtener la información o estado del usuario:
+
+```js
+const {user} = useContext(UserContext)
+```
