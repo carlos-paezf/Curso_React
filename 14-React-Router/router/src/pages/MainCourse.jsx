@@ -2,17 +2,17 @@ import React from 'react'
 import Card from '../components/Card'
 import { Foods } from '../models/foods'
 
-const DessertScreen = () => {
+const MainCourse = () => {
 
-    const desert = Foods.filter(f => f.categoria === "B")
+    const mainCourse = Foods.filter(f => f.categoria === "A")
 
     return (
         <div className="container-fluid mt-3">
-            <h1>Dessert Screen</h1>
+            <h1>Main Course Screen</h1>
             <hr />
             <div className="row">
             {
-                desert.map(dish => 
+                mainCourse.map(dish => 
                     <Card key={dish.id} {...dish} />
                 )
             }
@@ -21,4 +21,4 @@ const DessertScreen = () => {
     )
 }
 
-export default DessertScreen
+export default MainCourse

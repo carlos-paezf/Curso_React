@@ -18,7 +18,7 @@ export const Foods = [
         categoria: 'A'
     },
     {
-        id: 'carne-asada',
+        id: 'carneasada',
         nombre: 'Carne Asada',
         descripcion: 'Carne Asada con la calidad A5',
         categoria: 'A'
@@ -54,7 +54,7 @@ export const Foods = [
         categoria: 'B'
     },
     {
-        id: 'hot-dog',
+        id: 'hotdog',
         nombre: 'Hot-Dog',
         descripcion: 'Hot Dog tipico de los puestos de comida americanos',
         categoria: 'A'

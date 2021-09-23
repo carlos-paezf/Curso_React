@@ -61,3 +61,62 @@ En caso de que se ingrese una url erronea, la aplicación redirecciona a una pá
 ```js
 <Redirect to="/with-meat" />
 ```
+
+## Diferencia entre Link y NavLink
+
+Dentro de la documentación de `react-router-dom`, podemos encontrar que se dispone de 2 formas de enlazar links. `Link` es bastante útil para enlaces dentro del cuerpo de la aplicación. `NavLink` tiene la función principal de servir para los enlaces en los elementos `nav`, permitiendo que aplique por defecto la clase `active` en el elemento seleccionado, otra ventaja es que tambien nos permite dar estilos personalizados a la clase activa.
+
+```js
+<NavLink activeClassName="text-danger" className="nav-link" aria-current="page" to="/main-course">Main Course</NavLink>
+```
+
+## History
+
+Tenemos un hook que nos permite acceder al historial de rutas de nuestra aplicación, se llama `useHistory()` y es provisto por la librería de react-router-dom. En esta aplicación tenemos su uso al dar en el botón de Logout.
+
+```js
+const history = useHistory()
+const handleLogout = () => {
+    history.replace("/login")
+}
+```
+
+```js
+<button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
+```
+
+## Filter
+
+En este proyecto tenemos 2 tipos de alimentos, los que considero platillo fuerte y los postres. Cada alimento registrado dentro del archivo `foods.js` presenta una categoría, los que tienen la categoría `A` pertenecen al grupo de los platillos fuerte, y el grupo `B` pertenece a los postres. Para renderizar cada elemento dentro de los grupos adecuados, hacemos uso de la función `.filter()`, con el fin de guardar en una variable cada grupo.
+
+```js
+const food = Foods.filter(f => f.categoria === categoria)
+```
+
+## Cards
+
+El componente card recibe como props los elementos del arreglo de objetos de comida. Aqui es importante tener el cuenta lo siguiente: Debemos pasar el nombre tal cual de los campos de nuestro arreglo, con el din de que reconozca dichas caracteristicas.
+
+Aquí pasamos el mapeo de una comida y por cada elemento, se debe renderizar una card. Los props se los voy a mandar en conjunto mediante el operado spread.
+
+```js
+mainCourse.map(dish => 
+    <Card key={dish.id} {...dish} />
+)
+```
+
+El proceso anterior me evita tener que poner:
+
+```js
+mainCourse.map(dish => 
+    <Card key={dish.id} id={dish.id} nombre={dish.nombre} descripcion={dish.descripcion} categoria={dish.categoria} />
+)
+```
+
+Ahora bien, insisto, como le pasamos por props una copia del elemento en vez de la línea anterior, debemos poner dentro de nuestro componente `Card` el nombre exacto de los atributos de mi elemento. Por ejemplo estoy manejando la programación de mi aplicación en inglés, pero mi arreglo de objetos esta en español, los props que se pongan en `Card` no pueden estar en ingles, deben estar también en español.
+
+Podemos graficar las imagenes de nuestros elementos, al traer la url dinamica mediante un template string, donde, si seguimos un patrón en su nombre y el id de la comida dentro de nuestro, podemos traer facilmente su ubicación.
+
+```js
+const pathIMG = `/assets/${id}.png`
+```
