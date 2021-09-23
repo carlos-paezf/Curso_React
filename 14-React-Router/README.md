@@ -120,3 +120,43 @@ Podemos graficar las imagenes de nuestros elementos, al traer la url dinamica me
 ```js
 const pathIMG = `/assets/${id}.png`
 ```
+
+## Rutas con parámetros y useParam
+
+Dentro de la carpeta `pages` tendremos el archivo `DishScreen.jsx` el cual nos servira para retornar una vista por cada plato del que queremos ver más. Creamos una constante para traer el id que pasamos de cada alimento, el cual obtenemos del hook `useParams()` que nos provee el core `react-router`.
+
+Nosotros cuando pasamos un parámetro por una ruta y decimos que nos redireccione a otro componente, dicho componente va a recibir un objeto con los parámetros. y eso lo podemos comprar si escribimos:
+
+```js
+const params = useParams()
+console.log(params)
+```
+
+Nosotros, por el momento solo haremos uso del parámetro que usemos como id, en este caso, para diferenciar, quise poner el nombre del parámetro como `idFood`
+
+```js
+<Route exact path="/dish/:idFood" component={ DishScreen } />
+```
+
+```js
+const { idFood } = useParams()
+```
+
+## Método `goBack()`
+
+En nuestro componente `DishScreen` tenemos una columna con una descripción de los elementos y demás. Lo importante aquí, es el botón que tiene la función de regresar a la página o ruta anterior.
+
+```js
+<button onClick={handleBack}> Go Back </button>
+```
+
+Esta función va a llamar la propiedad historial de la cual tiene acceso ya que nuestro componente esta involucrado en el Router, de esa manera al tener acceso a `history`, podemos acceder también a la función `goBack()` con la que podemos regresar a la ruta anterior.
+
+```js
+const DishScreen = ({ history }) => {
+    const handleBack = () => {
+        history.goBack()
+    }
+    ...
+}
+```

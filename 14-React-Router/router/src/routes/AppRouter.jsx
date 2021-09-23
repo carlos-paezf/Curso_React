@@ -2,6 +2,7 @@ import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import DessertScreen from '../pages/DessertScreen'
+import DishScreen from '../pages/DishScreen'
 import MainCourse from '../pages/MainCourse'
 import SearchScreen from '../pages/SearchScreen'
 
@@ -13,7 +14,9 @@ const AppRouter = () => {
                 <Route exact path="/main-course" component={ MainCourse } />
                 <Route exact path="/dessert" component={ DessertScreen } />
                 <Route exact path="/search" component={ SearchScreen } />
-                <Redirect to="/main-course" />
+                <Route exact path="/dish/:idFood" component={ DishScreen } />
+
+                {/* <Redirect to="/main-course" /> */}
             </Switch>
         </>
     )

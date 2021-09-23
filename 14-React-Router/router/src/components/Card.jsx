@@ -21,7 +21,7 @@ const Card = ({ id, nombre, descripcion, categoria }) => {
                                 ? <p className="card-text"><small className="text-muted">Main Course</small></p>
                                 : <p className="card-text"><small className="text-muted">Desserts</small></p>
                             }
-                            <Link className="card-link" to="">More...</Link>
+                            <Link className="card-link" to={`/dish/${id}`}>More...</Link>
                         </div>
                     </div>
                 </div>
