@@ -160,3 +160,33 @@ const DishScreen = ({ history }) => {
     ...
 }
 ```
+
+## Search Screen
+
+Dentro de nuestra página de búsqueda, tenemos un formulario que tiene un input y un botón. Como requerimos obtener el valor que se ingrese, requerimos alterar un estado.
+
+```js
+const [inputValue, setInputValue] = useState("")
+
+const handleChange = (e) => {
+    const value = e.target.value
+    setInputValue(value)
+}
+```
+
+```js
+<input value={inputValue} onChange={handleChange} />
+```
+
+Ahora bien también requerimos que nuestro formulario al darle enviar reciba el valor pasado por input, pero evitando que la aplicación se refresque. Es por ello que usamos la propiedad `preventDefault()` del evento que se ejecuta. Ahora bien, para pasar el parámetro a la url, accedemos al prop `history` que se puede obtener al tener la clase relacionada en el Router, y empujamos la consulta. Esto se hará cada vez que el usuario presione el botón de enviar.
+
+```js
+const handleSubmit = (e) => {
+    e.preventDefault()
+    history.push(`?q=${inputValue}`)
+}
+```
+
+```js
+<form onSubmit={handleSubmit}>...</form>
+```
