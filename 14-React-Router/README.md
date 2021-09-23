@@ -42,3 +42,22 @@ Para instalar la librería hice uso del comando:
 ```cmd
 yarn add react-router-dom
 ```
+
+## Rutas
+
+Dentro de la carpeta `routes` tenemos 2 archivos con los que nos moveremos por el Login y luego de estar logeados en la aplicación. En el archivo `LoginRouter.jsx` tenemos la ruta hacia una pantalla de Login. Dentro del archivo `AppRouter.jsx` se crean las rutas para las pantallas especificas de la aplicación. Posteriormente, el componente `AppRouter` es llamada dentro del componente `LoginRouter`:
+
+```js
+<Router>
+    <AppRouter />
+    <Switch>
+        <Route exact path="/login" component={ LoginScreen } />
+    </Switch>
+</Router>
+```
+
+En caso de que se ingrese una url erronea, la aplicación redirecciona a una página en especifico, esto se declara dentro de las rutas de `AppRouter`:
+
+```js
+<Redirect to="/with-meat" />
+```
