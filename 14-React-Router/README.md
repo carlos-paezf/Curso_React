@@ -190,3 +190,59 @@ const handleSubmit = (e) => {
 ```js
 <form onSubmit={handleSubmit}>...</form>
 ```
+
+## Location y queryString
+
+Por medio de la función `useLocation()` que ofrece `react-router` podemos obtener algunos parámetros de nuestra consulta, tales como: pathname, search, hash, state y key. En nuestro caso queremos recuperar la búsqueda, por lo que extraemos el parámetro search.
+
+Vamos a usar la librería de `query-string` por lo que ingresamos el siguiente comando en la consola de nuestro proyecto:
+
+```cmd
+yarn add query-string
+```
+
+De la anterior librería usamos la función `.parse()` dentro de la cual pasamos el atributo `search` de nuestro location, con ello logramos parsear el string que se pasa por consulta a un objeto. Veamos la comparativa de los resultado
+
+| location.search  | queryString.parse(location.search) |
+| ---------------- | ---------------------------------- |
+| `?q=hamburguesa` | `{q: 'hamburguesa'}`               |
+
+El código base quedaría de la siguiente manera:
+
+```js
+const location = useLocation()
+const param = queryString.parse(location.search)
+```
+
+Ahora bien, en caso de que nuestra query este vacia, el resultado que vamos a obtener va a ser: `{q: ''}`.
+
+Podemos usar destructuring para obtener el el valor de la llave `q` con lo que tendríamos el siguiente código:
+
+```js
+const location = useLocation()
+const { q = ''} = queryString.parse(location.search)
+```
+
+Para obtener el alimento tomamos el valor que se esta ingresando (obviamente si es un valor diferente a un string vacio), luego lo convertimos a minusculas y comparamos dentro de los objetos de comida si el nombre de los elementos se encuentra contenido el valor ingresado. Esto luego lo pasamos a un array de alimentos que va estar cambiando con las nuevas coincidencias.
+
+```js
+const [foods, setFoods] = useState([])
+
+const getFoods = () => {
+    if (inputValue.trim() !== '') {
+        const value = inputValue.toLowerCase()
+        const coincidence = Foods.filter(f => f.nombre.toLowerCase().include(value))
+        setFoods(coincidence)
+    } else {
+        setFoods([])
+    }
+}
+```
+
+La función anterior solo se va a ejecutar cada vez que cambie el valor de la query que se pasa por parámetro en la URL.
+
+```js
+useEffect(() => {
+    getFoods()
+}, [q])
+```
