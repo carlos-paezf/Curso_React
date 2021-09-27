@@ -246,3 +246,49 @@ useEffect(() => {
     getFoods()
 }, [q])
 ```
+
+## Componente Private Router
+
+El componente privado nos ayuda a determinar estado de logeado. Dicho componente lo encontramos en la carpeta de `routes` con el nombre de `PrivateRouter.jsx`. El componete va a recibir como prop el componente al que se debe redirigir.
+
+```js
+const PrivateRouter = ({ component: Component }) => {
+    return <Route component={<Component />} />
+}
+```
+
+También vamos a manejar un contexto para la autenticación, por lo que creamos el archivo `context/AuthContext.js`. El archivo `reducers/AuthReducer.js` nos provee de una función, que a partir de la validación de un tipo de acción cambia el estado.
+
+```js
+export const AuthReducer = (state, action) => {
+    switch (action.type) {
+        case authTypes.login: return { log: true }
+        case authTypes.logout: return { log: false }
+        default: return state
+    }
+}
+```
+
+Por simple practicidad y seguridad, tenemos un archivo llamado `types/authTypes.js` el cual posee un objeto con los tipos posibles para las acciones del reducer.
+
+Todo se une en el archivo `App.jsx` en el cual hacemos uso del hook `useReducer()` que trae a `AuthReducer` y propone un estado inicial de un arreglo vacio y por init recibe una función para crear dentro del localStorage un item llamado `log`. Dicho item va a cambiar cada que `state` cambie su valor. Por último retornamos el contexto de la autenticación.
+
+```js
+const init = () => {
+    return JSON.parse(localStorage.getItem('log')) || { log: false }
+}
+
+const App = () => {
+    const [state, dispatch] = useReducer(AuthReducer, [], init)
+
+    useEffect(() => {
+        localStorage.setItem('log', JSON.stringify(state))
+    }, [state])
+
+    return (
+        <AuthContext.Provider value={{state, dispatch}}>
+            <LoginRouter />
+        </AuthContext.Provider>
+    )
+}
+```
