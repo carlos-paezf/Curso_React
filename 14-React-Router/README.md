@@ -292,3 +292,86 @@ const App = () => {
     )
 }
 ```
+
+## Componente Public Router
+
+Para configurar la ruta pública debemos establecer uq nuestro componente `PublicRouter` pueda recibir el componente al cual nos vamos a dirigir, en este caso sería el componente `LoginScreen`. Además debe ser capaz de recibir un contexto y las props que recibe `Route`.
+
+```js
+const PublicRouter = ({ auth, component: Component, ...rest}) => {
+    return <Route {...rest} component={() => <Component />} />
+}
+```
+
+Como pretendemos cambiar la forma en que llegamos a `LoginScreen` dejaremos l gestión de rutas del componente `LoginRouter` de la siguiente manera:
+
+```js
+<Router>
+    <Switch>
+        <PublicRouter path="/login" auth={log} component={LoginScreen} />
+    </Switch>
+</Router>
+```
+
+Como nos damos cuenta, estamos pasando el contexto de autenticación y un prop caracteristico de Route, el cual es recibido por `...rest` dentro de `PublicRouter`.
+
+## Alternar entre la zona pública y la privada
+
+Dentro del componente `LoginRouter` a parte de llamar el componente para redirigir a la zona pública, también llamamos el componente para la zona privada (`AppRouter`), al cual también le pasamos el contexto de auth y el path al cual debe dirigirse.
+
+```js
+<Router>
+    <Switch>
+        <PublicRouter path="/login" auth={log} component={LoginScreen} />
+        <PrivateRouter parh="/" auth={log} component={AppRouter} />
+    </Switch>
+</Router>
+```
+
+Como nosotros no tenemos ningún componente que haga render cuando la aplicación se dirija a la ruta `/` entonces dentro del componente `AppRouter` habilitamos la redirección a una zona elegida.
+
+```js
+<Redirect to="/main-course" />
+```
+
+Luego de todo lo anterior, podemos determinar dentro del componente `LoginScreen` el dispatch que va a manejar la acción y así modificar un estado del contexto, en esta ocasión, determinar el tipo login:
+
+```js
+const history = useHistory()
+    
+const { dispatch } = useContext(AuthContext)
+
+const handleLogin = () => {
+    dispatch({ type: authTypes.login })
+    history.push("/search")
+}
+```
+
+Lo mismo para el botón de logout dentro del componente `Navbar`:
+
+```js
+const history = useHistory()
+
+const { dispatch } = useContext(AuthContext)
+
+const handleLogout = () => {
+    dispatch({ type: authTypes.logout })
+    history.replace("/login")
+}
+```
+
+## Proteger las rutas
+
+Este proyecto es sencillo, no tenemos un sistema de Login profesional, pero si podemos observar como se protegen las rutas, en este caso queremos que no se pueda acceder al contenido privado si no ha dado click al botón de `Login`.
+
+Lo primero es dentro del componente `PublicRouter` en donde evaluamos la renderización del componente según el estado de auth. Si el estado es false, se renderiza el componente de `LoginScreen`, en caso contrario se redirige a la zona privada.
+
+```js
+return <Route {...rest} component={(props) => !auth.log ? <Component {...props} /> : <Redirect to="/" />} />
+```
+
+Y aplicamos la misma lógica para el componente `PrivateRouter`, si el estado de login es verdadero entonces, renderizamos el contenido privado, de lo contrario lo redirigimos a la página de login:
+
+```js
+return <Route {...rest} component={(props) => auth.log ? <Component {...props}/> : <Redirect to="/login" />} />
+```

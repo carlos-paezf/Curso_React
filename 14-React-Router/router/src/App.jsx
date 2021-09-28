@@ -9,14 +9,14 @@ const init = () => {
 }
 
 const App = () => {
-    const [state, dispatch] = useReducer(AuthReducer, [], init)
+    const [log, dispatch] = useReducer(AuthReducer, [], init)
 
     useEffect(() => {
-        localStorage.setItem('log', JSON.stringify(state))
-    }, [state])
+        localStorage.setItem('log', JSON.stringify(log))
+    }, [log])
 
     return (
-        <AuthContext.Provider value={{state, dispatch}}>
+        <AuthContext.Provider value={{ log, dispatch }}>
             <LoginRouter />
         </AuthContext.Provider>
     )

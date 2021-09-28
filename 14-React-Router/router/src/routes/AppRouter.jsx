@@ -16,7 +16,7 @@ const AppRouter = () => {
                 <Route exact path="/search" component={ SearchScreen } />
                 <Route exact path="/dish/:idFood" component={ DishScreen } />
 
-                {/* <Redirect to="/main-course" /> */}
+                <Redirect to="/main-course" />
             </Switch>
         </>
     )
