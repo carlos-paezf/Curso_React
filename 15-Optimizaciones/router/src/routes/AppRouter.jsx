@@ -1,23 +1,26 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
+
 import Navbar from '../components/Navbar'
-import DessertScreen from '../pages/DessertScreen'
-import DishScreen from '../pages/DishScreen'
-import MainCourse from '../pages/MainCourse'
-import SearchScreen from '../pages/SearchScreen'
+const DessertScreen = lazy(() => import('../pages/DessertScreen'))
+const DishScreen = lazy(() => import('../pages/DishScreen'))
+const MainCourse = lazy(() => import('../pages/MainCourse'))
+const SearchScreen = lazy(() => import('../pages/SearchScreen'))
 
 const AppRouter = () => {
     return (
         <>
             <Navbar />
-            <Switch>
-                <Route exact path="/main-course" component={ MainCourse } />
-                <Route exact path="/dessert" component={ DessertScreen } />
-                <Route exact path="/search" component={ SearchScreen } />
-                <Route exact path="/dish/:idFood" component={ DishScreen } />
+            <Suspense fallback={<h1>Loading...</h1>}>
+                <Switch>
+                    <Route exact path="/main-course" component={MainCourse} />
+                    <Route exact path="/dessert" component={DessertScreen} />
+                    <Route exact path="/search" component={SearchScreen} />
+                    <Route exact path="/dish/:idFood" component={DishScreen} />
 
-                <Redirect to="/main-course" />
-            </Switch>
+                    <Redirect to="/main-course" />
+                </Switch>
+            </Suspense>
         </>
     )
 }
