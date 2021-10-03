@@ -48,3 +48,7 @@ Como decia anteriormente, importante poner la importación de las variables ante
 @import "./sass/variables.scss";
 @import "./sass/Title.scss"
 ```
+
+## SASS Partials
+
+Una de las ventajas de SASS es que podemos dividir nuestras hojas de estilo en pequeños archivos denominados *partials*, los cuales posteriormente podemos importar en nuestras hojas de estilo principales mediante la expresión `@import`. Los archivos partials tienen la nomenclatura de `_nombre.scss`. De esta manera podemos tener la estructura básica de un proyecto para nuestros estilos.
