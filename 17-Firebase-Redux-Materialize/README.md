@@ -43,3 +43,20 @@ Para integrar [Materialize](https://materializecss.com/) utilizamos el CDN que n
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0js/materialize.min.js"></script>
 ```
+
+## Rutas de la aplicación
+
+Para añadir la librería de `react-router-dom` se usó el siguiente comando:
+
+```yarn
+yarn add react-router-dom
+```
+
+```js
+<BRouter>
+    <Switch>
+        <Route exact path="/login" component={LoginScreen}/>
+        <Route exact path="/register" component={RegisterScreen} />
+    </Switch>
+</BRouter>
+```
