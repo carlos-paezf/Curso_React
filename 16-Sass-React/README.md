@@ -52,3 +52,133 @@ Como decia anteriormente, importante poner la importación de las variables ante
 ## SASS Partials
 
 Una de las ventajas de SASS es que podemos dividir nuestras hojas de estilo en pequeños archivos denominados *partials*, los cuales posteriormente podemos importar en nuestras hojas de estilo principales mediante la expresión `@import`. Los archivos partials tienen la nomenclatura de `_nombre.scss`. De esta manera podemos tener la estructura básica de un proyecto para nuestros estilos.
+
+## Anidamiento de elementos
+
+Puede que tengamos que estilizar elementos que estan dentro de otros elementos, como es el caso de este ejemplo:
+
+```js
+<ul>
+    <li><a href="#">Google</a></li>
+    <li><a href="#">Facebook</a></li>
+    <li><a href="#">Github</a></li>
+</ul>
+```
+
+Una opción para dar estilos es la siguiente:
+
+```css
+ul {
+    list-style: none;
+}
+
+ul li {
+    display: inline-block;
+    padding: 10px;
+    margin: 0 10px;
+    border: 1px solid #000;
+    background-color: $dark;
+}
+
+ul li a {
+    text-decoration: none;
+    font-size: 2rem;
+    color: $white;
+}
+```
+
+Pero SASS nos permite anidar los elementos dejando más practicidad, obteniendo un código como el siguiente:
+
+```scss
+ul {
+    list-style: none;
+    
+    li {
+        display: inline-block;
+        padding: 10px;
+        margin: 0 10px;
+        border: 1px solid #000;
+        background-color: $dark;
+        
+        a {
+            text-decoration: none;
+            font-size: 2rem;
+            color: $white;
+        }
+    }
+}
+```
+
+## Pseudoclases y Pseudoelementos
+
+Podemos pasar de esto:
+
+```css
+ul li:hover {
+    background-color: #111;
+}
+```
+
+A tener de manera más compacta lo siguiente:
+
+```scss
+ul {
+    ...
+    
+    li {
+        ...
+        
+        &:hover {
+            background-color: #111;
+        }
+
+        a {
+            ...
+        }
+    }
+}
+```
+
+## Darken y Lighten
+
+Podemos establecer un color base y luego en otros elemento asociado, oscurecer o aclarar el valor del color de dicha variable, esto lo logramos con:
+
+Para oscurecer cierto porcentaje:
+
+```scss
+...: darken($color: color, $amount: cantidad);
+```
+
+Para aclarar cierto porcentaje:
+
+```scss
+...: lighten($color: color, $amount: cantidad);      
+```
+
+## Modularidad en Componentes
+
+Podemos simular los estilos de Bootstrap para los botones anidando y compartiendo los elementos:
+
+```js
+<button className="btn btn-outline-primary">Sumar 1</button>
+```
+
+```scss
+.btn {
+    background-color: $white;
+    color: $dark;
+    font-size: 1rem;
+    border: solid 1px $dark;
+    border-radius: 2rem;
+    padding: 5px 10px;
+
+    &.btn-outline-primary {
+        border-color: $primary;
+        
+        &:hover {
+            background-color: $primary;
+            color: $white;
+        }
+    }
+}
+```

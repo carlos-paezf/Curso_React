@@ -1,0 +1,17 @@
+.btn {
+    background-color: $white;
+    color: $dark;
+    font-size: 1rem;
+    border: solid 1px $dark;
+    border-radius: 2rem;
+    padding: 5px 10px;
+
+    &.btn-outline-primary {
+        border-color: $primary;
+        
+        &:hover {
+            background-color: $primary;
+            color: $white;
+        }
+    }
+}
