@@ -60,3 +60,131 @@ yarn add react-router-dom
     </Switch>
 </BRouter>
 ```
+
+# Sección 20: Auth Service - Firebase
+
+## Formulario de Login
+
+Dentro de Materialize podemos obtener diversas plantillas para formularios, e incluso algunos estan acompañados por iconos. Para activar estos últimos, debemos copiar el siguiente link dentro del archivo de `index.html`
+
+```html
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+```
+
+Para consultar estilos de elementos para nuestra página, debemos acceder a la documentación de Materialize para conocer los estilos de los cuales podemos disponer.
+
+## Google Auth Button
+
+Podemos tener un botón para acceso a Google con un estilo muy globalizado en todas las aplicaciones. Lo podemos obtener al instalar lo siguiente:
+
+```cmd
+yarn add react-google-button
+```
+
+Para su implementación hacemos la importación dentro del archivo:
+
+```js
+import GoogleButton from 'react-google-button'
+```
+
+Y por ejemplo, para ver sin funcionalidad:
+
+```js
+<GoogleButton onClick={() => console.log("google")} />
+```
+
+## Redux DevTools
+
+En Chrome podemos buscar la extensión llamada Redux DevTools. Al tenerlo instalado, podemos acceder a él, dentro las herramientas de desarrollador.
+
+## Configurando Redux
+
+Creamos una carpeta y un archivo llamados `store`, el cual contiene todo el árbol de estado de estado de nuestra aplicación. El store no es una clase, es solo un objeto con unos pocos métodos. Para crearlo, pasamos muestras funciones reductoras al `createStore`, en caso de tener solo un reducer, pasamos su nombre a la función:
+
+```js
+import { createStore } from 'redux'
+import { authReducer } from '../reducers/authReducer'
+
+
+export const store = createStore(authReducer)
+```
+
+Para traer varios reducers, podemos usar la función `combineReducers`, la cuál recibira un objeto con los diferentes reducers de la aplicación.
+
+```js
+import { authReducer } from '../reducers/authReducer'
+import { createStore, combineReducers } from 'redux'
+
+
+const reducers = combineReducers({
+    auth = authReducer
+})
+
+export const store = createStore(reducers)
+```
+
+El archivo `reducer/authReducer.js` consiste en un reducer para hacer acciones dependiendo de la acción, en este caso `login` y `logout`. Dichas acciones estaran definidas en el archivo `types/types.js`, pero definimos el tipo especifico que se tomara al escribir el nombre el tipo y su implicación: `'[Auth] login'`, en este caso definimos que login solo sera para autenticación.
+
+## Store
+
+Debemos proveer nuestro store a toda la aplicación, por lo que en el archivo `App.jsx` vamos a traer un `Provider` que entregara el store.
+
+```js
+import { Provider } from 'react-redux'
+import { store } from './store/store'
+
+const App = () => {
+    return (
+        <Provider store={store}>
+            ...
+        </Provider>
+    )
+}
+```
+
+## Activar Redux DevTools
+
+Para activar la herramienta, podemos acceder a las instrucciones que ofrece, lo que nos redirige a un repositorio en github y nos muestra la instrucción de como añadirlo al store.
+
+```js
+export const store = createStore(
+    reducers,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
+```
+
+## Primer dispatch Redux
+
+Dentro de la carpeta `actions` tenemos el archivo `auth.js` en el cual tenemos las acciones de login o logout. Por ejemplo la acción de login sera de la siguiente manera:
+
+```js
+import { types } from "../types/types"
+
+export const googleLogin = (id, username) => {
+    return {
+        type: types.login,
+        payload: {
+            id, username
+        }
+    }
+}
+```
+
+Dentro de `LoginScreen.jsx` creamos la función que estará asociada al boton de inicio de sesión con Google Login. Dicha función "dispara" el estate para el login. Dicho dispatch lo importamos de `react-redux`.
+
+```js
+import { useDispatch } from 'react-redux'
+
+
+const LoginScreen = () => {
+
+    const dispatch = useDispatch()
+
+    const handleGoogleLogin = () => {
+        dispatch(googleLogin('124', 'Ferrer'))
+    }
+
+    return (...)
+
+}
+```
