@@ -584,3 +584,120 @@ const App = () => {
     )
 }
 ```
+
+# Sección 21: Firestore Database - Firebase
+
+## Bienvenida personalizada
+
+Podemos usar el hook llamado `useSelector()` de `react-redux`, con el cual podemos obtener información de la sesión, tales como el id (uid) y el username (displayName), estos elementos varian de acuerdo a lo que ese este empleando para el login de cada aplicación.
+
+```js
+import { useSelector } from 'react-redux'
+
+const state = useSelector(state => state)
+```
+
+Como el resultado es un objeto, podemos aplicar destructuración y obtener los elementos que necesitamos para nuestra aplicación, en este caso queremos obtener el displayName para mostrar en el saludo.
+
+```js
+const { auth } = useSelector(state => state)
+```
+
+Ó
+
+```js
+const name = useSelector(state => state.auth.username)
+```
+
+## Nomina Reducer
+
+La base de datos de nuestra aplicación va a tener una estructura similar a este estilo:
+
+```json
+{
+    id: "4ufH6ydGgeZW2oTYZYeeBdB0DEI3",
+    fecha: "19/10/2021",
+    pago: 100.00
+}
+```
+
+Dentro de la carpeta de los reducers creamos uno nuevo llamado `nominaReducer`, el cual vamos a añadir en el objeto reducers del archivo `store.js`
+
+```js
+const reducers = combineReducers({
+    auth: authReducer,
+    nomina: nominaReducer
+})
+```
+
+Para saber si se añadió de manera correcta, vamos a la extensión de Redux DevTools y seleccionamos la opción **State** y vemos si esta dentro de los objetos que se listan.
+
+## Guardar datos en Firestore
+
+Dentro de la consola de nuestro proyecto en Firebase, ingresamos a la opción de *Firestore Database*, seleccionamos *Crear base de datos*, *Comenzar en modo de producción* y *Habilitar*. Ingresamos a *Reglas* y dentro del código que nos aparece cambiamos la opción del booleano a True y publicamos los cambios.
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
+Dentro de la carpeta `actions` creamos el archivo `nomina.js`, con una función para añadir registros a nuestra database en Firestore. Lo primero es obtener el id o uid que se ha pasado por la función `login()` del archivo `auth.js`, con ese id vamos a crear la colección en nuestra base de datos. Luego enviamos la referencia a la BBDD con los datos a inscribir.
+
+```js
+import { addDoc, collection } from "@firebase/firestore"
+import { db } from "../firebase/config"
+
+
+export const crearRegistro = (pago) => {
+    return async (dispatch, getState) => {
+        const { id } = getState().auth
+
+        const datos = {
+            fecha: new Date(),
+            pago: pago
+        }
+
+        const referencia = await addDoc(collection(db, `${id}/nominas/nomina`), datos)
+    }
+}
+```
+
+Añadimos los tipos para el CRUD de los registros de nomina.
+
+```js
+export const types = {
+    nominaAdd: '[Nomina] add',
+    nominaDelete: '[Nomina] delete',
+    nominaRead: '[Nomina] read',
+    nominaClean: '[Nomina] clean',
+}
+```
+
+También tenemos un formulario para añadir los valores de `precioHora` y `horas`, los cuales multiplicamos y pasamos ese resultado al disparar la función de `crearRegistro()` que va a pasar los datos a la colección de la base de datos de Firestore.
+
+```js
+const [cantidadPago, setCantidadPago] = useState({
+    precioHora: 0,
+    horas: 0
+})
+
+const { precioHora, horas } = cantidadPago
+
+const handleChange = (e) => {
+    setCantidadPago({
+        ...cantidadPago,
+        [e.target.name]: e.target.value
+    })
+}
+
+const handleSave = () => {
+    const cantidadFinal = horas * precioHora
+    dispatch(crearRegistro(cantidadFinal))
+}
+```
