@@ -75,7 +75,7 @@ const RegisterScreen = () => {
                     <button type="submit" className="btn waves-effect waves-light green">Enviar <i className="material-icons right">send</i></button>
 
                     <hr />
-                    <Link to="/login">Login into your account</Link>
+                    <Link to="/auth/login">Login into your account</Link>
                 </form>
             </div>
         </div>

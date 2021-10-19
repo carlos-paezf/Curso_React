@@ -413,3 +413,174 @@ const handleEmailLogin = (e) => {
     dispatch(emailAndPasswordLogin(email, password))
 }
 ```
+
+## Capturar sesiones iniciadas
+
+Podemos capturar las sesione mediante el uso de Local Store o como se manejo en este caso, mediante los métodos de Firestore. Por ejemplo si queremos imprimir el último usuario que inicio sesión, podemos lograrlo mediante el siguiente código dentro del archivo de `AuthRouter.jsx`:
+
+```js
+import { getAuth, onAuthStateChanged } from '@firebase/auth'
+
+const auth = getAuth()
+
+useEffect(() => {
+    onAuthStateChange(auth, (user) => console.log(user))
+}, [auth])
+```
+
+También podemos disparar la función de `login()` al crear un dispatch y emplearlo dentro del `useEffect()`:
+
+```js
+import { useDispatch } from 'react-redux'
+import { login } from '../actions/auth'
+
+
+const dispatch = useDispatch()
+
+useEffect(() => {
+    onAuthStateChanged(auth, (user) => dispatch(login(user.uid, user.displayName)))
+}, [])
+```
+
+Ahora si podemos observar dentro de la extensión de Redux DevTools, que cada que se hace login con un usuario diferente, la información del login se actualiza, y aún más importante, mantiene la información luego de recargar la página.
+
+## Logout
+
+Para efectuar el logout debemos tener una screen de nuestra app con un botón que tenga la acción de logout. La funcionalidad de dicho botón es que cada vez que se active dispare la función de logout de nuestro archivo `actions/auth.js`:
+
+```js
+import { useDispatch } from 'react-redux'
+import { logout } from '../actions/auth' 
+
+const Navbar = () => {
+    const dispatch = useDispatch()
+
+    const handleLogout = () => {
+        dispatch(logout())
+    }
+
+    return (
+        ...
+        <button onCLick={handleLogout}>Logout</button>
+        ...
+    )
+}
+```
+
+La función de `logout()` retorna una funcionalidad asincrona que espera el cierre de sesión dentro de firebase.
+
+```js
+const auth = getAuth()
+
+export const logout() => {
+    return async (dispatch) => {
+        await signOut(auth)
+        dispatch({
+            type: types.logout
+        })
+    }
+}
+```
+
+Cuando cerramos la sesión, también debemos validar que al no existe un usuario actualmente, no debe mostrar las propiedades de uid ni el displayName de algo null:
+
+```js
+useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            dispatch(login(user.uid, user.displayName))
+        }
+    })
+}, [auth, dispatch])
+```
+
+## Protección de rutas
+
+Dentro de nuestro archivo de `AppRouter.jsx` creamos una pequeña validación para saber si se esta logeado o no.
+
+```js
+const [log, setLog] = useState(false)
+
+useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            dispatch(login(user.uid, user.displayName))
+            setLog(true)
+        } else {
+            setLog(false)
+        }
+    })
+}, [auth, dispatch])
+```
+
+Dicha validación la pasamos como props al componente que se encarga de proteger las rutas privadas es decir `PrivateRouter`, junto con el `AppScreen`. El componente `AuthRouter` va a contener las rutas para login y register, bajo el concepto de subruta, puesto que seran hijas de la ruta `/auth`.
+
+```js
+const AppRouter = () => {
+    ...
+    return (
+        <BRouter>
+            <Switch>
+                <PublicRouter path="/auth" log={log} component={AuthRouter}/>
+                <PrivateRouter log={log} component={AppScreen} />
+            </Switch>
+        </BRouter>
+    )
+}
+```
+
+```js
+const AuthRouter = () => {
+    return (
+        <>
+            <Route exact path="/auth/login" component={LoginScreen} />
+            <Route exact path="/auth/register" component={RegisterScreen} />
+            <Redirect to="/auth/login" />
+        </>
+    )
+}
+```
+
+Al hacer lo anterior, implica que también se deben hacer los cambios para los enlaces que redirigen dentro de las páginas de `LoginScreen` y `RegisterScreen`.
+
+El componente de `PrivateRouter` se encarga de hacer un renderizado condicional dependiendo del estado de login que se pasa por parámetro.
+
+```js
+const PrivateRouter = ({ log, component: Component, ...resto }) => {
+    return (
+        <Route
+            {...resto}
+            component={(props) =>
+                log ? <Component {...props} /> : <Redirect to="/auth/login" />
+            } />
+    )
+}
+```
+
+El componente de `PublicRouter` se encarga de redirigir a la zona privada una vez se halla logeado o por el contrario, enviar a la zona de inicio de sesion.
+
+```js
+const PublicRouter = ({ log, component: Component, ...resto }) => {
+    return (
+        <Route
+            {...resto}
+            component={(props) =>
+                log ? <Redirect to="/" /> : <Component {...props} />
+            } />
+    )
+}
+```
+
+El prop `...resto` es para poder añadir los props necesarios para el componente `Route` por ejemplo los props `exact` o `path`.
+
+El componente principal `App.jsx` va a gestionar de manera global las rutas de `AppRouter`:
+
+```js
+const App = () => {
+    return (
+        <Provider store={store}>
+            <AppRouter />
+        </ Provider>
+    )
+}
+```
