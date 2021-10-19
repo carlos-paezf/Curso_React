@@ -188,3 +188,228 @@ const LoginScreen = () => {
 
 }
 ```
+
+## Redux Thunk - Middleware
+
+Vamos a instalar la librería de `redux-thunk` mediante el comando de:
+
+```cmd
+yarn add redux-thunk
+```
+
+Un *thunk* es una función que atrapa una expresión y retrasa su evaluación. Un *Middleware* es una lógica de intercambio de información entre aplicaciones, asiste a una aplicación para interactuar o comunicarse con otras aplicaciones, o paquetes de programas, redes hardware o sistemas operativos. 
+
+La mayoría de aplicaciones extienden la funcionalidad del redux al añadir middleware o enhancers (potenciadores) pera sus store. Los middleware añaden funcionalidad extra a las funciones dispatch del Redux, mientras que los enhancers añaden funcionalidad a los store de Redux. Mediante el middleware de `redux-thunk` vamos a permitir un uso asincrono del dispatch. El middleware registras las acciones distribuidas el nuevos estados resultantes. Y el enhancer registra el tiempo que tardan los reductores en procesar cada acción.
+
+En el caso de nuestro ejercicio, aplicamos el enhancer y el thunk de la siguiente manera:
+
+```js
+import { applyMiddleware, compose } from 'react-redux'
+import thunk from 'redux-thunk'
+
+const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose)
+
+export const store = createStore(
+    reducers, 
+    composeEnhancers(
+        applyMiddleware(thunk)
+    )
+)
+```
+
+## Configurar Firebase Web v9 (modular)
+
+```cmd
+yarn add firebase
+```
+
+Dentro de Firebase Console, ingresamos a nuestro proyecto, y en la Descripción General del Proyecto seleccionamos la opción de web, la cual esta representada por el icono `</>`, registramos nuestra app y copiamos la configuración que nos nuestra para nuestra aplicación dentro del archivo `firebase/config.js`. 
+
+```js
+import { initializeApp } from "firebase/app";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCTOU7gNFH_rjkIS4IVA5-y8gVN3ZgeoS4",
+  authDomain: "crud-react-226db.firebaseapp.com",
+  projectId: "crud-react-226db",
+  storageBucket: "crud-react-226db.appspot.com",
+  messagingSenderId: "514854200161",
+  appId: "1:514854200161:web:a8a186f1e28e5f3085db20"
+};
+
+
+const app = initializeApp(firebaseConfig);
+```
+
+Además también llamamos las librerías de firestore y auth de firebase:
+
+```js
+import { getFirestore } from 'firebase/firestore'
+import { GoogleAuthProvider } from 'firebase/auth'
+
+...
+const db = getFirestore(app)
+const googleAuthProvider = new GoogleAuthProvider() 
+
+export { app, db, googleAuthProvider }
+```
+
+Vamos a hacer una modificación dentro del archivo de `actions/auth.js` en donde la función de `googleLogin()` sera la que tenga la conexión con Google mediante la autenticación con una ventana emergente que nos va a solicitar nuestro correo electronico. 
+
+```js
+import { getAuth, signInWithPopup } from "@firebase/auth"
+import { googleAuthProvider } from "../firebase/config"
+
+export const googleLogin = () => {
+    const auth = getAuth()
+    return (dispatch) => {
+        signInWithPopup(auth, googleAuthProvider)
+            .then((data) => console.log(data))
+    }
+}
+```
+
+Una vez se haya ingresado cualquier correo de google, nuestra aplicación registrara como nuevo usuario a dicho correo. De dicho usuario necesitamos el uid y el displayName, los cuales pasaremos por parámetros a la función `login` por medio del dispatch:
+
+```js
+const auth = getAuth()
+
+export const googleLogin = () => {
+    return (dispatch) => {
+        signInWithPopup(auth, googleAuthProvider)
+            .then(({ user }) => {
+                dispatch(login(user.uid, user.displayName))
+            })
+    }
+}
+```
+
+Con lo anterior ya podemos ingresar a la herramienta de redux y observar que se están pasando un objeto con los 2 parámetros solicitados.
+
+## Registren Screen
+
+El formulario de registro contiene los campos de Email, Username, Password y Confirm Password.
+
+## Capturar los datos del formulario
+
+Dentro del Formulario de Registro, asignamos a la propiedad de onSubmit una función evitar que la página se refresque cuando se modifiquen los datos.
+
+```js
+<form onSubmit={handleRegister} className="col s12"> ... </form>
+```
+
+```js
+const handleRegister = (e) => {
+    e.preventDefault()
+}
+```
+
+Para capturar los datos tomamos el nombre y el valor, se comparan con los campos de la data y se asignan en los campos respectivos:
+
+```js
+const handleChange = (e) => {
+    const value = e.target.value
+    setData({
+        ...data,
+        [e.target.name]: value
+    })
+}
+```
+
+```js
+<input onChange={handleChange} value={email} name="email" id="icon_prefix1" className="materialize-textarea" type="text" />
+```
+
+## Validación de los datos
+
+Establecemos que el email no este vacio y que debe contener un arroba, el username debe tener una longitud minima de 5 caracteres, la contraseña debe tener un minimo de 8 caracteres y si cumple dicha validación se pasa a verificar si la contraseña de confirmación es la misma a la ingresada en el campo anterior.
+
+```js
+const handleRegister = (e) => {
+    e.preventDefault()
+
+    if (email.trim() === '' || !email.trim().includes('@')) return 
+    if (username.trim().length < 5) return
+    if (password.trim().length < 8) return 
+    else { 
+        if(password.trim() === confirmPassword.trim) return
+    }
+}
+```
+
+Es importante recordar que estas validaciones no hacen segura nuestra aplicación, solo estamos simulando un registro de usuario desde el frontend, para mayor seguridad debemos aplicar las restricciones desde el backend.
+
+## Registro de usuarios en Firebase
+
+Dentro del archivo de `auth.js` creamos la función para registrar los usuario con email y contraseña dentro de Firebase, para lo cual creamos la siguiente función:
+
+```js
+const auth = getAuth()
+
+export const register = (email, username, password) => {
+    return (dispatch) => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((data) => {console.log(data)})
+    }
+}
+```
+
+Dentro de `RegisterScreen.jsx` creamos un dispatch para poder enviar la información valida dentro la función de registro:
+
+```js
+const dispatch = useDispatch()
+
+const handleRegister = (e) => {
+    ...
+    dispatch(register(email, username, password))
+}
+```
+
+Si revisamos la consola del proyecto en firebase en la sección Authentication - Users, podemos observar que se registran nuevos usuario a medida que hacemos las pruebas al formulario
+
+## Agregar displayName al registrar
+
+Para poder modificar el usuario y agregar un displayName, debemos modificar la función de `register()` de la siguiente manera:
+
+```js
+const auth = getAuth()
+
+export const register = (email, username, password) => {
+    return (dispatch) => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async ({ user }) => {
+                await updateProfile(auth.currentUser, { displayName: username })
+                dispatch(login(user.uid, user.displayName))
+            })
+    }
+}
+```
+
+## Autenticación con Email y Password
+
+Para hacer Login con el email y el password de un usuario registrado, creamos la función ``, la cual recibe por parámetros los elementos necesarios y dispara el evento de mostrar el logeo en el redux:
+
+```js
+const auth = getAuth()
+
+export const emailAndPasswordLogin = (email, password) => {
+    return (dispatch) => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then( ({ user }) => {
+                dispatch(login(user.uid, user.displayName))
+            })
+    }
+}
+```
+
+Dentro del archivo de `LoginScreen.jsx` tenemos una función que valida los campos en cuanto al arroba o a la longitud y posteriormente, si son correctos, lanza la función de login:
+
+```js
+const handleEmailLogin = (e) => {
+    e.preventDefault()
+    if (email.trim() === '' || !email.trim().includes('@')) return 
+    if (password.trim().length < 8) return 
+    dispatch(emailAndPasswordLogin(email, password))
+}
+```
