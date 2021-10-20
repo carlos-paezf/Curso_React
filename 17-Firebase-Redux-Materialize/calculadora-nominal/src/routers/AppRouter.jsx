@@ -7,6 +7,8 @@ import PrivateRouter from './PrivateRouter'
 import AppScreen from '../pages/AppScreen'
 import AuthRouter from './AuthRouter'
 import PublicRouter from './PublicRouter'
+import { loadData } from '../helpers/loadData'
+import { leerRegistros } from '../actions/nomina'
 
 
 const AppRouter = () => {
@@ -17,10 +19,12 @@ const AppRouter = () => {
     const [log, setLog] = useState(false)
 
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 dispatch(login(user.uid, user.displayName))
                 setLog(true)
+                const nominaData = await loadData(user.uid)
+                dispatch(leerRegistros(nominaData))
             } else {
                 setLog(false)
             }

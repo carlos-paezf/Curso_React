@@ -701,3 +701,65 @@ const handleSave = () => {
     dispatch(crearRegistro(cantidadFinal))
 }
 ```
+
+## Leyendo información de Firestore
+
+Creamos una carpeta llamada `helpers` en la que almacenamos una función de ayuda para cargar la data (`loadData()`), dicha función recibe por parámetro el uid del usuario para poder traer la información almacenada en su colección. Es importante aclarar que el método `.forEach()` que se aplica en la respuesta, no es el ciclo tradicional, es un método que enumera todos los elementos en el QuerySnapshot.
+
+```js
+import { collection, getDocs } from "@firebase/firestore"
+import { db } from "../firebase/config"
+
+export const loadData = async (uid) => {
+    const response = await getDocs(collection(db, `${uid}/nominas/nomina`))
+    const data = []
+    response.forEach((nomina) => {
+        const nominaData = nomina.data()
+        data.push({
+            id: nomina.id,
+            ...nominaData
+        })
+    })
+    console.log(data)
+    return data
+} 
+```
+
+Dicha función la llamamos dentro del `useEffect()` de `AppRouter.jsx` con el fin de que se cargue en el momento que exista un usuario conectado. También convertimos la función a un tipo async para recibir la promesa de la carga de datos y posteriormente pasar dicha data como parámetro de una función que leerá los registros y se dispara con el dispatch de redux
+
+```js
+useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            dispatch(login(user.uid, user.displayName))
+            setLog(true)
+            const nominaData = await loadData(user.uid)
+            dispatch(leerRegistros(nominaData))
+        } else {
+            setLog(false)
+        }
+    })
+}, [auth, dispatch])
+```
+
+```js
+export const leerRegistros = (data) => {
+    return {
+        type: types.nominaRead,
+        payload: data
+    }
+} 
+```
+
+Para el reducer de nomina tenemos que cuando la información se va a leer, sea una copia de la original, con el fin de que en caso de modificarse, no altere la información de origen.
+
+```js
+export const nominaReducer = (state = {}, action) => {
+    switch (action.type) {
+        case types.nominaRead: return {
+            ...state, 
+            nominaData: action.payload
+        }
+    }
+} 
+```

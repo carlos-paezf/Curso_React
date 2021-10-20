@@ -1,5 +1,6 @@
 import { addDoc, collection } from "@firebase/firestore"
 import { db } from "../firebase/config"
+import { types } from "../types/types"
 
 
 export const crearRegistro = (pago) => {
@@ -15,3 +16,11 @@ export const crearRegistro = (pago) => {
         console.log(referencia);
     }
 }
+
+
+export const leerRegistros = (data) => {
+    return {
+        type: types.nominaRead,
+        payload: data
+    }
+} 
