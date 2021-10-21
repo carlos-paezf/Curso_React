@@ -43,7 +43,7 @@ export const crear = (data) => {
 export const borrarRegistro = (idData) => {
     return async (dispatch, getState) => {
         const { id } = getState().auth
-        const referencia = await deleteDoc(doc(db, `${id}/nominas/nomina/`, `${idData}`))
+        await deleteDoc(doc(db, `${id}/nominas/nomina/`, `${idData}`))
         dispatch(borrar(idData))
     } 
 }
@@ -52,5 +52,12 @@ export const borrar = (id) => {
     return {
         type: types.nominaDelete,
         payload: id
+    }
+}
+
+
+export const limpiar = () => {
+    return {
+        type: types.nominaClean
     }
 }

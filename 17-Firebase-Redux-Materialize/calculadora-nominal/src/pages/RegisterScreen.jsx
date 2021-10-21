@@ -38,7 +38,7 @@ const RegisterScreen = () => {
     }
 
     return (
-        <div className="container">
+        <div className="container  animate__animated animate__rollIn">
             <h1>Register</h1>
             <hr />
             <div className="row">

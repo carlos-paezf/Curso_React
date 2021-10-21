@@ -900,7 +900,7 @@ Para borrar los registros, tomamos en cuenta el id del registro a eliminar y el 
 export const borrarRegistro = (idData) => {
     return async (dispatch, getState) => {
         const { id } = getState().auth
-        const referencia = await deleteDoc(doc(db, `${id}/nominas/nomina/`, `${idData}`))
+        await deleteDoc(doc(db, `${id}/nominas/nomina/`, `${idData}`))
         dispatch(borrar(idData))
     } 
 }
@@ -923,3 +923,66 @@ const handleDelete = () => {
     dispatch(borrarRegistro(id))
 }
 ```
+
+## Action: Limpiar los datos al cerrar la sesión
+
+Cada que cerramos sesión, debemos limpiar los datos que están almacenados en Redux, para ello, dentro del botón de logout en el componente `Nabvar` le solicitamos que dispare la función para limpiar los datos:
+
+```js
+const handleLogout = () => {
+    dispatch(limpiar())
+    dispatch(logout())
+}
+```
+
+Definimos el caso de limpiar dentro de nuestro reducer. Llamamos el state, pero el contenido de la data será un array vacio.
+
+```js
+case types.nominaClean: return {
+    ...state,
+    nominaData: []
+}
+```
+
+En el archivo que controla las acciones de nuestra nomina, creamos una función que va a llamar al tipo para limpiar:
+
+```js
+export const limpiar = () => {
+    return {
+        type: types.nominaClean
+    }
+}
+```
+
+## Detalles finales de la aplicación
+
+Simplemente se hicieron pequeños retoques a la interfaz de la aplicación. Además se implemento la librería [`Animate.css`](https://animate.style/).
+
+Para añadirlas agregamos el siguiente link dentro de nuestro archivo `public/index.html`:
+
+```html
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+/>
+```
+
+Para aplicar las animaciones que nos brinda dicha librería, seguimos los pasos de la documentación.
+
+## Desplegar la aplicación
+
+Registramos el ServiceWorker en el archivo `src/index.js`:
+
+```js
+serviceWorkerRegistration.register();
+```
+
+Configuramos el archivo `public/manifest.json`.
+
+Ejecutamos el comando para generar una versión que subiremos al servidor:
+
+```yarn
+yarn build
+```
+
+Podemos subir el directorio de `build` que se nos genera para subirlo al servidor en el que se piensa desplegar. Importante informar que el servicio de Google no esta configurado en el despliegue de la aplicación, razón por la cual no arroja el popup para inicio de sesión con una cuenta google.
