@@ -17,6 +17,12 @@ export const nominaReducer = (state = initialState, action) => {
             ...state, 
             nominaData: action.payload
         }
+        case types.nominaDelete: return {
+            ...state,
+            nominaData: state.nominaData.filter((nomina) => {
+                return nomina.id !== action.payload 
+            })
+        }
         default: return state
     }
 } 

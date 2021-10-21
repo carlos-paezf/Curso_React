@@ -880,3 +880,46 @@ export const crearRegistro = (pago) => {
     }
 }
 ```
+
+## Action: Eliminar Registro
+
+La acción para eliminar un registro toma en cuenta el id de la nomina y filtra los elementos que son diferentes a dicho valor para enviarlos por el payload, con ello se hace el cambio visual en la aplicación.
+
+```js
+case types.nominaDelete: return {
+    ...state,
+    nominaData: state.nominaData.filter((nomina) => {
+        return nomina.id !== action.payload 
+    })
+}
+```
+
+Para borrar los registros, tomamos en cuenta el id del registro a eliminar y el id del usuario, con ello podemos definir que se borre el ***Documento*** de la Colección correspondiente al usuario. Luego se envia por el dispatch la función que activa el borrado en la interfaz de nuestra aplicación.
+
+```js
+export const borrarRegistro = (idData) => {
+    return async (dispatch, getState) => {
+        const { id } = getState().auth
+        const referencia = await deleteDoc(doc(db, `${id}/nominas/nomina/`, `${idData}`))
+        dispatch(borrar(idData))
+    } 
+}
+
+export const borrar = (id) => {
+    return {
+        type: types.nominaDelete,
+        payload: id
+    }
+}
+```
+
+Debemos tomar el id de la data que deseamos eliminar para entregarlos como parámetro a la función que es dispara cada que se pulsa el botón de borrar.
+
+```js
+const { fecha, pago, id } = data
+const dispatch = useDispatch()
+
+const handleDelete = () => {
+    dispatch(borrarRegistro(id))
+}
+```
