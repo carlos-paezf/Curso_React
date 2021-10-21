@@ -763,3 +763,120 @@ export const nominaReducer = (state = {}, action) => {
     }
 } 
 ```
+
+## Pintar los datos dinámicamente
+
+Lo primero es traer los datos que se pueden obtener mediante `useSelector()` de **Redux** en el archivo de `AppScreen`:
+
+```js
+const nominaData = useSelector(state => state.nomina.nominaData)
+```
+
+Tenemos que configurar un estado inicial de tipo array vacio para dicha variable dentro del reducer de nomina, esto con el fin de poder aplicar métodos para arrays sobre la data obtenida:
+
+```js
+const initialState = {
+    nominaData: []
+}
+
+export const nominaReducer = (state = initialState, action) => {
+    ...
+} 
+```
+
+Volviendo al archivo de `AppScreen` creamos una tabla, y en el cuerpo de la misma pasamos un componente llamado `Element` el recibira como prop la data que hemos obtenido.
+
+```js
+<tbody>
+    {
+        nominaData.map((e, i) => <Element key={i} data={e} />)
+    }
+</tbody>
+```
+
+Dicho componente se encarga de pintar los datos dentro de las filas y columnas de la tabla, además de formatear la fecha a un estado más simple pero legible:
+
+```js
+const Element = ({ data }) => {
+
+    const { fecha, pago } = data
+
+    const date = fecha.toDate()
+    const fechaFormato = date.toLocaleDateString()
+
+    return (
+        <tr>
+            <td>{fechaFormato}</td>
+            <td>{pago}</td>
+            <td><button className="btn red">Borrar</button></td>
+        </tr>
+    )
+}
+```
+
+## Action: Crear Registro
+
+Hasta el momento, podemos crear los elementos, pero para observarlos debemos recargar la página. Para evitar eso, podemos agregarle otro tipo de funcionalidad a la acción de `nominaAdd` de nuestro nominaReducer.
+
+La idea es que cuando activamos la función de crear se devuelva los datos que ya están registrados y además sobrescribe el `action.payload`
+
+```js
+case types.nominaAdd: return {
+    ...state,
+    nominaData: [
+        ...state.nominaData,
+        action.payload
+    ]
+}
+```
+
+Vamos a dispara una función que retorne la data que se ha creado:
+
+```js
+export const crear = (data) => {
+    return {
+        type: types.nominaAdd,
+        payload: data,
+    }
+}
+```
+
+```js
+export const crearRegistro = (pago) => {
+    return async (dispatch, getState) => {
+        ...
+        const idData = await referencia.id
+        const newData = {
+            ...datos,
+            idData
+        }
+        dispatch(crear(newData))
+    }
+}
+```
+
+Para evitar errores con la fecha, hacemos la siguiente modificación que nos va a permitir ver la fecha al momento de finalizar el registro:
+
+```js
+let fechaFormato
+
+if (fecha.seconds) {
+    const date = fecha.toDate()
+    fechaFormato = date.toLocaleDateString()
+} else {
+    fechaFormato = fecha
+}
+```
+
+```js
+export const crearRegistro = (pago) => {
+    return async (dispatch, getState) => {
+        ...
+        const datos = {
+            fecha: new Date().toLocaleDateString(),
+            pago: pago
+        }
+        ...
+    }
+}
+```
