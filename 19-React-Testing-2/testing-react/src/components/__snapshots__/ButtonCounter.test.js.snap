@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ButtonCounter /> Snapshot para <ButtonCounter /> 1`] = `
+<button
+  aria-label="prueba-aumentar"
+>
+  Prueba
+</button>
+`;
