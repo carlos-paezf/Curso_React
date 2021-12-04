@@ -27,3 +27,7 @@ Es una mezcla entre JavaScript y XML, lo cual permite escribir XML en JS y por e
 - HTML CSS Support
 - Live Server
 - Prettier - Code Formatter
+
+## Certificado de finalización del curso
+
+![Certificado](UC-5e2fbc85-c8d9-4c4b-9e5a-64d2af67bab2.jpg)
